@@ -16,7 +16,8 @@ const initialState = {
     isPosting: false,
     timeline: [],
     likes: [],
-    posts: []
+    posts: [],
+    tags: {}
   }
 }
 

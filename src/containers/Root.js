@@ -4,6 +4,7 @@ import { Router, Route, IndexRoute, Redirect, browserHistory } from 'react-route
 import App from '../containers/App'
 import Home from '../containers/Home'
 import Profile from '../containers/Profile'
+import Tag from '../containers/Tag'
 
 export default class Root extends React.Component {
   render(){
@@ -16,6 +17,7 @@ export default class Root extends React.Component {
               <IndexRoute component={Home}  />
               <Redirect from="users/:uid" to="users/:uid/posts" />
               <Route path="users/:uid/:page" component={Profile} />
+              <Route path="tags/:hash" component={Tag} />
             </Route>
           </Router>
         </Provider>
