@@ -25,7 +25,11 @@ import {
   FETCH_LIKES_FIALUER,
   FETCH_POSTS_REQUEST,
   FETCH_POSTS_SUCCESS,
-  FETCH_POSTS_FIALUER
+  FETCH_POSTS_FIALUER,
+  FETCH_TAGS_REQUEST,
+  FETCH_TAGS_SUCCESS,
+  FETCH_TAGS_FIALUER
+
 
 } from '../actions/messageAction'
 
@@ -44,7 +48,7 @@ function devideMessages(messages, condition){
   return {first: messages.slice(0, i + 1), last:messages.slice(i + 1, messages.length)}
 }
 
-function insertMessage(timeline, message){
+function insertMessage(timeline = [], message){
   const division = devideMessages(timeline,(timeline) => timeline.createdAt >= message.createdAt)
   if(division.first.length > 0 && division.first[division.first.length - 1].mid === message.mid){
     return timeline
@@ -143,6 +147,12 @@ handler[FETCH_POSTS_SUCCESS] = (state, action) => {
   const posts = insertMessage(state.posts, action.message)
   return (posts === state.posts)? state : Immutable.Map(state).set('posts', posts).toJS()
 }
+
+handler[FETCH_TAGS_SUCCESS] = (state, action) => {
+  const tags = insertMessage(state.tags[action.hash], action.message)
+  return (tags === state.tags)? state : Immutable.fromJS(state).setIn(['tags', action.hash], tags).toJS()
+}
+
 
 export default function messageReducer(state = {}, action){
   if(!handler[action.type]){

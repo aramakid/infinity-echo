@@ -327,6 +327,36 @@ export function fetchPosts(uid, timestamp){
   }
 }
 
+export const FETCH_TAGS_REQUEST = 'FETCH_TAGS_REQUEST'
+export const FETCH_TAGS_SUCCESS = 'FETCH_TAGS_SUCCESS'
+export const FETCH_TAGS_FIALUER = 'FETCH_TAGS_FIALUER'
+
+export function fetchTags(hash, timestamp){
+  return (dispatch, getState) =>{
+
+    dispatch({ type: FETCH_TAGS_REQUEST, hash: hash})
+    const query = firebaseRef.child(`tags/${hash}`).orderByValue().endAt(timestamp).limitToLast(20)
+    query.once('value')
+    .then(ref =>{
+      const data = Immutable.OrderedMap(ref.val()).reverse()
+      data.forEach((data, key) => {
+        getMessage(key).then(messageRef => {
+          const message = Immutable.Map(messageRef.val()).set('mid', key).toJS()
+          createMessage(message)
+          .then(createdMessage => {
+            dispatch({ type: FETCH_TAGS_SUCCESS, message: createdMessage, hash: hash})
+          })
+          .catch(error =>{
+            dispatch({type: FETCH_TAGS_FIALUER, error: error })
+          })
+        })
+      })
+    })
+    .catch(error =>{
+      dispatch({type: FETCH_TAGS_FIALUER, error: error })
+    })
+  }
+}
 
 export const LISTEN_MESSAGE_START = 'LISTEN_MESSAGE_START'
 export const LISTEN_MESSAGE_END = 'LISTEN_MESSAGE_END'
