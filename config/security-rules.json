@@ -1,0 +1,51 @@
+{
+  "rules": {
+    ".read" : false,
+    ".write": false,
+    "users": {
+      ".read": true,
+      "$uid": {
+        ".write": "auth.uid === $uid",
+        ".validate": "newData.hasChildren(['name', 'displayName', 'avatar'])"
+      }
+    },
+    "messages": {
+      ".read": true,
+      ".indexOn": "createdAt",
+      "$mid": {
+        ".write": "!data.exists() && newData.child('owner').val() === auth.uid",
+        ".validate": "newData.hasChildren(['type', 'owner', 'createdAt']) && (newData.child('type').val() === 'PING' || newData.child('type').val() === 'ECHO') && ( (newData.child('type').val() === 'PING' && newData.child('text').isString() && newData.child('text').val().length <= 140 && newData.child('text').val().length > 0) || (newData.child('type').val() === 'ECHO' && !newData.child('text').exists()) ) && ( (newData.child('type').val() === 'PING' && !newData.child('originalPost').exists()) || (newData.child('type').val() === 'ECHO' && newData.child('originalPost').exists()) ) && newData.child('createdAt').val() === now"
+      }
+    },
+    "posts": {
+      ".read": true,
+      "$uid": {
+        ".write": "auth.uid === $uid",
+        ".indexOn": ".value",
+        "$mid" :{
+            ".validate": "!data.exists() && auth.uid === $uid && root.child('messages/' + $mid).exists() && newData.val() === now"
+        }
+      }
+    },
+    "likes": {
+      ".read": true,
+      "$uid": {
+        ".write": "auth.uid === $uid",
+        ".indexOn": ".value",
+        "$mid" :{
+            ".validate": "auth.uid === $uid && root.child('messages/' + $mid).exists() && newData.val() === now"
+        }
+      }
+    },
+    "tags": {
+      ".read": true,
+      "$tag": {
+        ".write": "true",
+        ".indexOn": ".value",
+        "$mid" :{
+            ".validate": "!data.exists() && root.child('messages/' + $mid).exists() && newData.val() === now"
+        }
+      }
+    }
+  }
+}

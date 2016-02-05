@@ -1,0 +1,76 @@
+img.avater--min {
+  width: 32px;
+  height: 32px;
+}
+
+.message {
+  overflow: visible;
+  min-height: 120px;
+  margin-bottom: 48px;
+}
+
+.message > .avatar {
+  position: absolute;
+  transform: translate(-28px, -28px);
+}
+
+.message > .avatar img {
+  width: 56px;
+  height: 56px;
+}
+
+.message > .mdl-card__supporting-text {
+  margin-top: 48px;
+  max-height: 300px;
+}
+
+.message > .message__footer {
+  display: flex;
+  padding: 16px;
+}
+
+
+.timeline-enter.timeline-enter-active {
+  animation: animation 1000ms linear both;
+}
+
+.posts-enter {
+  opacity: 0.1;
+  transition: opacity .5s ease-in;
+}
+
+.posts-enter.posts-enter-active {
+  opacity: 1;
+}
+
+.likes-enter {
+  opacity: 0.01;
+  transition: opacity .5s ease-in;
+}
+
+.likes-enter.likes-enter-active {
+  opacity: 1;
+}
+
+.likes-leave {
+  transition: .5s;
+}
+
+.likes-leave.likes-leave-active {
+  transform: scale(0.1, 0.1);
+}
+
+/* Generated with Bounce.js. Edit at http://goo.gl/a8lmtL */
+
+@keyframes animation {
+  0% { transform: matrix3d(0.1, 0, 0, 0, 0, 0.1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); }
+  4.3% { transform: matrix3d(0.563, 0, 0, 0, 0, 0.563, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); }
+  8.61% { transform: matrix3d(0.891, 0, 0, 0, 0, 0.891, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); }
+  12.91% { transform: matrix3d(1.047, 0, 0, 0, 0, 1.047, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); }
+  17.22% { transform: matrix3d(1.084, 0, 0, 0, 0, 1.084, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); }
+  28.33% { transform: matrix3d(1.019, 0, 0, 0, 0, 1.019, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); }
+  39.44% { transform: matrix3d(0.994, 0, 0, 0, 0, 0.994, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); }
+  61.66% { transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); }
+  83.98% { transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); }
+  100% { transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); }
+}

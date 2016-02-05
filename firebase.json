@@ -1,0 +1,18 @@
+{
+  "firebase": "i-e",
+  "public": "public",
+  "ignore": [
+    "firebase.json",
+    "**/.*",
+    "**/node_modules/**",
+    "**/config/**",
+    "**/src/**",
+    "package.json",
+    "webpack.config.json"
+  ],
+  "rules": "config/security-rules.json",
+  "rewrites": [ {
+    "source": "**",
+    "destination": "/index.html"
+  } ]
+}
