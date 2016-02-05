@@ -48,6 +48,9 @@ export default class Message extends React.Component {
         <Link to={`/users/${message.owner.uid}`} className="avatar mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--fab mdl-js-ripple-effect  mdl-shadow--2dp">
           <img src={message.owner.avatar} />
         </Link>
+        <div class="mdl-card__title mdl-color-text--grey-500" style={{marginLeft: 48}}>
+        {message.owner.displayName}@{message.owner.name}
+        </div>
         <div className="mdl-card__supporting-text" dangerouslySetInnerHTML={{__html: marked(addTagLink(message.text))}} />
         {auth.isLogin &&
           <div className="mdl-card__menu">
@@ -68,7 +71,7 @@ export default class Message extends React.Component {
           <div className="mdl-layout-spacer" />
           <div >
             {message.type === 'ECHO' &&
-              <div className="mdl-color-text--grey-300">
+              <div >
                 echoed by{' '}
                 <Link to={`/users/${message.echoedBy.uid}`} className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
                   <img className="avater--min" src={message.echoedBy.avatar} />
