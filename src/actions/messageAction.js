@@ -163,10 +163,10 @@ function getLike(uid, mid){
   return firebaseRef.child(`likes/${uid}/${mid}`).once('value')
 }
 
-function createPingMessage(data){
+function createPingMessage(data, auth){
   return new Promise( (resolve, reject) => {
     const userPromise = getUser(data.owner)
-    const likePromise = getLike(data.owner, data.mid)
+    const likePromise = getLike(auth.user.uid, data.mid)
     Promise.all([userPromise, likePromise])
       .then(values => {
         const owner =
@@ -217,10 +217,10 @@ function createEchoMessage(data){
     })
 }
 
-function createMessage(data){
+function createMessage(data, auth){
   if(data.type == 'PING'){
     return new Promise((resolve, reject) => {
-      createPingMessage(data)
+      createPingMessage(data, auth)
         .then((message) => {
           resolve(message)
         }).catch((error) => {
@@ -243,6 +243,8 @@ function createMessage(data){
 
 export function fetchMessage(timestamp){
   return (dispatch, getState) => {
+    const { auth } = getState()
+
     dispatch({ type: FETCH_MESSAGE_REQUEST })
     const query = firebaseRef.child('messages').orderByChild('createdAt').endAt(timestamp).limitToLast(20)
     query.once('value')
@@ -250,7 +252,7 @@ export function fetchMessage(timestamp){
         const data = Immutable.OrderedMap(ref.val()).reverse()
         data.forEach((data, key) => {
           const message = Immutable.Map(data).set('mid', key).toJS()
-          createMessage(message)
+          createMessage(message, auth)
             .then(createdMessage => {
               dispatch({ type: FETCH_MESSAGE_SUCCESS, message: createdMessage})
             })
@@ -271,7 +273,7 @@ export const FETCH_LIKES_FIALUER = 'FETCH_LIKES_FIALUER'
 
 export function fetchLikes(uid, timestamp){
   return (dispatch, getState) =>{
-
+    const { auth } = getState()
     dispatch({ type: FETCH_LIKES_REQUEST, uid: uid})
     const query = firebaseRef.child(`likes/${uid}`).orderByValue().endAt(timestamp).limitToLast(20)
     query.once('value')
@@ -280,7 +282,7 @@ export function fetchLikes(uid, timestamp){
       data.forEach((data, key) => {
         getMessage(key).then(messageRef => {
           const message = Immutable.Map(messageRef.val()).set('mid', key).toJS()
-          createMessage(message)
+          createMessage(message, auth)
           .then(createdMessage => {
             dispatch({ type: FETCH_LIKES_SUCCESS, message: createdMessage})
           })
@@ -302,6 +304,7 @@ export const FETCH_POSTS_FIALUER = 'FETCH_POSTS_FIALUER'
 
 export function fetchPosts(uid, timestamp){
   return (dispatch, getState) =>{
+    const { auth } = getState()
 
     dispatch({ type: FETCH_POSTS_REQUEST, uid: uid})
     const query = firebaseRef.child(`posts/${uid}`).orderByValue().endAt(timestamp).limitToLast(20)
@@ -311,7 +314,7 @@ export function fetchPosts(uid, timestamp){
       data.forEach((data, key) => {
         getMessage(key).then(messageRef => {
           const message = Immutable.Map(messageRef.val()).set('mid', key).toJS()
-          createMessage(message)
+          createMessage(message, auth)
           .then(createdMessage => {
             dispatch({ type: FETCH_POSTS_SUCCESS, message: createdMessage})
           })
@@ -333,6 +336,7 @@ export const FETCH_TAGS_FIALUER = 'FETCH_TAGS_FIALUER'
 
 export function fetchTags(hash, timestamp){
   return (dispatch, getState) =>{
+    const { auth } = getState()
 
     dispatch({ type: FETCH_TAGS_REQUEST, hash: hash})
     const query = firebaseRef.child(`tags/${hash}`).orderByValue().endAt(timestamp).limitToLast(20)
@@ -342,7 +346,7 @@ export function fetchTags(hash, timestamp){
       data.forEach((data, key) => {
         getMessage(key).then(messageRef => {
           const message = Immutable.Map(messageRef.val()).set('mid', key).toJS()
-          createMessage(message)
+          createMessage(message, auth)
           .then(createdMessage => {
             dispatch({ type: FETCH_TAGS_SUCCESS, message: createdMessage, hash: hash})
           })
@@ -364,6 +368,7 @@ export const NEW_MESSAGE_COMMING = 'NEW_MESSAGE_COMMING'
 
 export function listenMessages(timestamp){
   return (dispatch, getState) => {
+    const { auth } = getState()
     const { isListen } = getState().message
     if(isListen){
       return
@@ -373,7 +378,7 @@ export function listenMessages(timestamp){
     const query = firebaseRef.child('messages').orderByChild('createdAt').startAt(timestamp)
     query.on('child_added', data => {
       const message = Immutable.Map(data.val()).set('mid', data.key()).toJS()
-      createMessage(message).then(createdMessage => {
+      createMessage(message, auth).then(createdMessage => {
         dispatch({ type: NEW_MESSAGE_COMMING, message: createdMessage})
       })
     })
