@@ -186,7 +186,7 @@ function createPingMessage(data, auth){
   })
 }
 
-function createEchoMessage(data){
+function createEchoMessage(data, auth){
   return new Promise((resolve, reject) => {
     const originalPostPromise = getMessage(data.originalPost)
     const echoUserPromise = getUser(data.owner)
@@ -200,7 +200,7 @@ function createEchoMessage(data){
           Immutable.Map(values[1].val())
             .set('uid', data.owner)
 
-        createPingMessage(originalPost)
+        createPingMessage(originalPost, auth)
           .then(message => {
             const finalMessage =
               Immutable.Map(data)
@@ -230,7 +230,7 @@ function createMessage(data, auth){
   }
   if(data.type == 'ECHO'){
     return new Promise((resolve, reject) => {
-      createEchoMessage(data)
+      createEchoMessage(data, auth)
       .then( message => {
           resolve(message)
         }
