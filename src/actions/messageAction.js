@@ -165,15 +165,18 @@ function getLike(uid, mid){
 
 function createPingMessage(data, auth){
   return new Promise( (resolve, reject) => {
+    const promises = [getUser(data.owner)]
+    if(auth.isLogin){
+      promises.push(getLike(auth.user.uid, data.mid))
+    }
     const userPromise = getUser(data.owner)
-    const likePromise = getLike(auth.user.uid, data.mid)
-    Promise.all([userPromise, likePromise])
+    Promise.all(promises)
       .then(values => {
         const owner =
           Immutable.Map(values[0].val())
             .set('uid', data.owner)
             .toJS()
-        const like = values[1].exists()
+        const like = values.length > 1 && values[1].exists()
         const message =
           Immutable.Map(data)
             .set('owner', owner)
